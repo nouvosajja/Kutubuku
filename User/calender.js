@@ -27,24 +27,36 @@ function renderCalendar() {
   // Hari dari bulan sebelumnya
   for (let i = firstDayofMonth; i > 0; i--) {
     liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
+    
   }
 
   // Hari bulan ini
-  for (let i = 1; i <= lastDateofMonth; i++) {
-    let isToday = i === date.getDate() && currMonth === new Date().getMonth() &&
-                  currYear === new Date().getFullYear() ? "active" : "";
+for (let i = 1; i <= lastDateofMonth; i++) {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const fullDate = `${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
 
-    const fullDate = `${currYear}-${String(currMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+  let isToday = "";
+  let bgStyle = "";
 
-    let bgStyle = "";
-    if (tasksByDate[fullDate] && tasksByDate[fullDate].length > 0) {
-      const taskCategory = tasksByDate[fullDate][0].kategori;
-      const color = priorityColors[taskCategory] || "#6CA64C";
-      bgStyle = `style="background-color: ${color}; color: white; border-radius: 50%;"`;
-    }
+if (new Date(fullDate) < new Date(todayStr)) {
+  // Hari sudah lewat → tidak beri warna
+  bgStyle = "";
+} else if (tasksByDate[fullDate] && tasksByDate[fullDate].length > 0) {
+  // Hari ini atau mendatang → kasih warna kategori
+  const sortedTasks = tasksByDate[fullDate].slice().sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+  const taskCategory = sortedTasks[0].kategori;
+  const color = priorityColors[taskCategory];
+  bgStyle = `style="background-color: ${color}; color: white; border-radius: 50%;"`;
+} else if (fullDate === todayStr) {
+  // Hari ini tanpa task → warna default ungu
+  bgStyle = `style="background-color: #7b68ee; color: white; border-radius: 50%;"`;
+}
 
-liTag += `<li class="${isToday}" data-full-date="${fullDate}" ${bgStyle}>${i}</li>`;
-  }
+
+  liTag += `<li class="${isToday}" data-full-date="${fullDate}" ${bgStyle}>${i}</li>`;
+}
+
 
   // Hari dari bulan berikutnya
   for (let i = lastDayofMonth; i < 6; i++) {

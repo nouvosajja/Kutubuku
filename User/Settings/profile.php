@@ -34,7 +34,7 @@ $user = mysqli_fetch_assoc($result);
       <div class="col-md-12 setting-full d-flex flex-column align-items-center justify-content-center">
         <div class="top-left-title">
           <i class="fas fa-user fa-lg"></i>
-          <span class="fw-bold fs-5">Profil</span>
+          <span class="fw-bold fs-5 translate" data-key="profile">Profil</span>
         </div>
         <a href="javascript:history.back()" class="btn-close top-right-close" aria-label="Close"></a>
 
@@ -49,14 +49,14 @@ $user = mysqli_fetch_assoc($result);
       style="width: 160px; height: 160px; object-fit: cover;">
 
     <div>
-      <label for="foto" class="btn btn-warning">Pilih Foto</label>
+<label for="foto" class="btn btn-warning translate" data-key="choosePhoto">Pilih Foto</label>
       <!-- HANYA INI YANG DIPAKAI DAN DI DALAM FORM -->
       <input type="file" id="foto" name="foto" accept="image/*" style="display: none;">
     </div>
   </div>
 
   <div class="mb-4">
-    <label for="nama" class="form-label">Nama</label>
+<label for="nama" class="form-label translate" data-key="name">Nama</label>
     <input type="text" class="form-control" id="nama" name="nama"
       value="<?php echo htmlspecialchars($user['nama']); ?>" required />
   </div>
@@ -68,12 +68,13 @@ $user = mysqli_fetch_assoc($result);
   </div>
 
   <div class="mb-4">
-    <label for="password" class="form-label">Password Baru</label>
-    <input type="password" class="form-control" id="password" name="password" placeholder="Kosongkan jika tidak ingin mengubah" />
-  </div>
+<label for="password" class="form-label translate" data-key="newPassword">Password Baru</label>
+<input type="password" class="form-control translate" id="password" name="password"
+       data-placeholder="leaveBlank" placeholder="Kosongkan jika tidak ingin mengubah" />
+
 
   <div class="text-center">
-    <button type="submit" class="submit-btn btn btn-danger w-100">Ganti</button>
+<button type="submit" class="submit-btn btn btn-danger w-100 translate" data-key="submitChange">Ganti</button>
   </div>
 </form>
 
@@ -93,7 +94,7 @@ $user = mysqli_fetch_assoc($result);
       }
     });
   </script>
-
+  <script src="lang.js"></script>
 
 </body>
 

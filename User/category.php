@@ -85,7 +85,7 @@ $allTasksJSON = json_encode($allTasks);
                 <a href="priority.php" class="btn btn-success nav-btn">Priority</a>
                 <div class="mt-auto">
                     <a href="Settings/setting.php" class="d-flex align-items-center gap-2 text-dark text-decoration-none">
-                        <p class="fw-bold mb-0">Setting</p>
+                        <p class="fw-bold mb-0 translate" data-key="setting">Pengaturan</p>
                         <i class="fas fa-cog fa-lg"></i>
                     </a>
                 </div>
@@ -97,11 +97,11 @@ $allTasksJSON = json_encode($allTasks);
 
                     <!-- Category -->
                     <div class="col-md-5 rounded-box-category-all">
-                        <h5 class="fw-bold">Category</h5>
+                        <h5 class="fw-bold translate" data-key="category">Kategori</h5>
                         <div class="category-grid-all">
                             <!-- Category PentingMendesak -->
                             <div class="category-box-all">
-                                <h6 class="fw-bold text-center">Penting, Mendesak</h6>
+                                <h6 class="fw-bold text-center translate" data-key="Penting, Mendesak">Penting, Mendesak</h6>
                                 <?php foreach ($tasks_penting_mendesak as $task): ?>
                                     <div class="row align-items-center px-4 pt-2">
                                         <div class="col text-start"><?php echo htmlspecialchars($task['kegiatan']); ?></div>
@@ -113,7 +113,7 @@ $allTasksJSON = json_encode($allTasks);
 
                             <!-- Category PentingTidakMendesak -->
                             <div class="category-box-all">
-                                <h6 class="fw-bold text-center">Penting, Tidak Mendesak</h6>
+                                <h6 class="fw-bold text-center translate" data-key="Penting, Tidak Mendesak">Penting, Tidak Mendesak</h6>
                                 <?php foreach ($tasks_penting_tidak_mendesak as $task): ?>
                                     <div class="row align-items-center px-4 pt-2">
                                         <div class="col text-start"><?php echo htmlspecialchars($task['kegiatan']); ?></div>
@@ -126,7 +126,7 @@ $allTasksJSON = json_encode($allTasks);
 
                             <!-- Category TidakPentingMendesak -->
                             <div class="category-box-all">
-                                <h6 class="fw-bold text-center">Tidak Penting, Mendesak</h6>
+                                <h6 class="fw-bold text-center translate" data-key="Tidak Penting, Mendesak">Tidak Penting, Mendesak</h6>
                                 <?php foreach ($tasks_tidak_penting_mendesak as $task): ?>
                                     <div class="row align-items-center px-4 pt-2">
                                         <div class="col text-start"><?php echo htmlspecialchars($task['kegiatan']); ?></div>
@@ -138,7 +138,7 @@ $allTasksJSON = json_encode($allTasks);
 
                             <!-- Category TidakPentingTidakMendesak -->
                             <div class="category-box-all">
-                                <h6 class="fw-bold text-center">Tidak Penting, Tidak Mendesak</h6>
+                                <h6 class="fw-bold text-center translate" data-key="Tidak Penting, Tidak Mendesak">Tidak Penting, Tidak Mendesak</h6>
                                 <?php foreach ($tasks_tidak_penting_tidak_mendesak as $task): ?>
                                     <div class="row align-items-center px-4 pt-2">
                                         <div class="col text-start"><?php echo htmlspecialchars($task['kegiatan']); ?></div>
@@ -193,18 +193,18 @@ $allTasksJSON = json_encode($allTasks);
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                     </div>
                     <div class="modal-body">
-                        <label class="fw-bold mb-1">Nama Kegiatan</label>
+                        <label class="fw-bold mb-1 translate" data-key="enterActivity">Nama Kegiatan</label>
                         <input type="text" class="form-control mb-3">
-                        <label class="fw-bold mb-1">Kategori</label>
+                        <label class="fw-bold mb-1 translate" data-key="category">Kategori</label>
                         <select class="form-select mb-3">
-                            <option selected disabled>Pilih kategori</option>
-
-                            <option>Penting, Mendesak</option>
-                            <option>Penting, Tidak Mendesak</option>
-                            <option>Tidak Penting, Mendesak</option>
-                            <option>Tidak Penting, Tidak Mendesak</option>
+                            <option selected disabled class="translate" data-key="selectCategory">Pilih kategori</option>
+                            <option value="Penting, Mendesak" class="translate" data-key="Penting, Mendesak">Penting, Mendesak</option>
+                            <option value="Penting, Tidak Mendesak" class="translate" data-key="Penting, Tidak Mendesak">Penting, Tidak Mendesak</option>
+                            <option value="Tidak Penting, Mendesak" class="translate" data-key="Tidak Penting, Mendesak">Tidak Penting, Mendesak</option>
+                            <option value="Tidak Penting, Tidak Mendesak" class="translate" data-key="Tidak Penting, Tidak Mendesak">Tidak Penting, Tidak Mendesak</option>
                         </select>
-                        <label class="fw-bold mb-1">Waktu</label>
+
+                        <label class="fw-bold mb-1 translate" data-key="time">Waktu</label>
                         <input type="datetime-local" class="form-control">
                     </div>
                     <div class="modal-footer border-0">
@@ -213,12 +213,35 @@ $allTasksJSON = json_encode($allTasks);
                 </div>
             </div>
         </div>
+        <script>
+            const upcomingTasks = <?php echo json_encode($todos); ?>;
 
-<script>
-  const tasksByDate = <?php echo json_encode($allTasks); ?>;
-</script>
+            function checkReminder() {
+                const now = new Date().getTime();
+
+                upcomingTasks.forEach(task => {
+                    const taskTime = new Date(task.due_date).getTime();
+                    const diffMinutes = Math.floor((taskTime - now) / 60000);
+
+                    if (diffMinutes === 5 && !task.reminded) {
+                        // Tampilkan notifikasi
+                        alert(`⏰ Reminder!\n"${task.kegiatan}" akan dimulai dalam 5 menit!`);
+
+                        // Tandai sudah diingatkan agar tidak berulang
+                        task.reminded = true;
+                    }
+                });
+            }
+
+            // Cek setiap 30 detik
+            setInterval(checkReminder, 30000);
+        </script>
+        <script>
+            const tasksByDate = <?php echo json_encode($allTasks); ?>;
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
         <script src="calender.js"></script>
+        <script src="Settings/lang.js"></script>
 </body>
 
 </html>

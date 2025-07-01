@@ -1,4 +1,6 @@
 <?php
+date_default_timezone_set("Asia/Jakarta"); // <-- wajib ini biar waktu sesuai WIB
+
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Login/loginU.php");
@@ -25,10 +27,11 @@ if ($result) {
 function getTasksByCategory($conn, $user_id, $kategori)
 {
     $kategori = mysqli_real_escape_string($conn, $kategori);
-$query = "SELECT * FROM todolist 
+    $query = "SELECT * FROM todolist 
           WHERE user_id = $user_id 
           AND kategori = '$kategori' 
-          AND due_date >= NOW()";    $result = mysqli_query($conn, $query);
+          AND due_date >= NOW()";
+    $result = mysqli_query($conn, $query);
     $tasks = [];
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
@@ -65,10 +68,8 @@ if ($resultAll) {
     }
 }
 $allTasksJSON = json_encode($allTasks);
-    
+
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -107,7 +108,7 @@ $allTasksJSON = json_encode($allTasks);
                 <a href="priority.php" class="btn btn-success nav-btn">Priority</a>
                 <div class="mt-auto">
                     <a href="Settings/setting.php" class="d-flex align-items-center gap-2 text-dark text-decoration-none">
-                        <p class="fw-bold mb-0">Setting</p>
+                        <p class="fw-bold mb-0 translate" data-key="setting">Pengaturan</p>
                         <i class="fas fa-cog fa-lg"></i>
                     </a>
                 </div>
@@ -118,12 +119,14 @@ $allTasksJSON = json_encode($allTasks);
                 <!-- Today List & Calendar Toggle -->
                 <div class="row align-items-start mb-3">
                     <div class="col-12 rounded-box">
-                        <h5 class="fw-bold">Today List</h5>
+                        <h5 class="fw-bold translate" data-key="todayList">Daftar Hari Ini</h5>
                         <?php foreach ($todos as $todo): ?>
                             <div class="todo-item">
                                 <div class="row align-items-center px-4 todo-text">
                                     <div class="col text-start fw-bold"><?php echo htmlspecialchars($todo['kegiatan']); ?></div>
-                                    <div class="col text-center text-capitalize"><?php echo htmlspecialchars($todo['kategori']); ?></div>
+                                    <div class="col text-center text-capitalize translate" data-key="<?= htmlspecialchars($todo['kategori']); ?>">
+                                        <?= htmlspecialchars($todo['kategori']); ?>
+                                    </div>
                                     <div class="col text-end"><?php echo date('d M Y, H:i', strtotime($todo['due_date'])); ?></div>
                                 </div>
                                 <hr class="mx-4 mt-2 mb-0">
@@ -162,38 +165,41 @@ $allTasksJSON = json_encode($allTasks);
                 <!-- Category + Priority -->
                 <div class="row d-flex justify-content-between gap-2">
                     <div class="col-md-5 rounded-box-category">
-                        <h5 class="fw-bold small-heading">Category</h5>
+                        <h5 class="fw-bold small-heading translate" data-key="category">Kategori</h5>
                         <div class="category-grid">
                             <?php foreach ($tasks_matrix as $kategori => $list): ?>
                                 <div class="category-box">
                                     <div class="row align-items-center px-3 pt-2">
-                                        <div class="col text-start fw-bold category-label-small"><?= htmlspecialchars($kategori) ?></div>
-                                        <div class="col text-end"><?= count($list) ?> tugas</div>
+                                        <div class="col text-start fw-bold category-label-small translate" data-key="<?= htmlspecialchars($kategori) ?>">
+                                            <?= htmlspecialchars($kategori) ?>
+                                        </div>
+                                        <div class="col text-end"><?= count($list) ?> <span class="translate" data-key="tasks">tugas</span></div>
                                     </div>
                                     <hr class="mx-3 mt-2 mb-0">
                                 </div>
                             <?php endforeach; ?>
-
                         </div>
                     </div>
 
                     <div class="col-md-6 position-relative rounded-box-priority">
-                        <h5 class="fw-bold">Priority</h5>
+                        <h5 class="fw-bold translate" data-key="priority">Prioritas</h5>
                         <?php foreach ($tasks_matrix as $kategori => $list): ?>
                             <?php foreach ($list as $task): ?>
                                 <div class="priority-bar mb-3" style="background-color: <?= $priority_colors[$kategori] ?>; border-radius: 12px; color: white;">
                                     <div class="row align-items-center px-4 pt-2">
                                         <div class="col text-start fw-bold"><?= htmlspecialchars($task['kegiatan']) ?></div>
-                                        <div class="col text-center text-capitalize"><?= htmlspecialchars($kategori) ?></div>
+                                        <div class="col text-center text-capitalize translate" data-key="<?= htmlspecialchars($kategori) ?>">
+                                            <?= htmlspecialchars($kategori) ?>
+                                        </div>
                                         <div class="col text-end"><?= date('d M Y, H:i', strtotime($task['due_date'])) ?></div>
                                     </div>
                                     <hr class="mx-4 mt-1 mb-0" style="border-color: white;">
                                 </div>
                             <?php endforeach; ?>
                         <?php endforeach; ?>
-
                     </div>
                 </div>
+
 
                 <button class="add-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">+</button>
             </div>
@@ -209,65 +215,65 @@ $allTasksJSON = json_encode($allTasks);
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4">
                 <div class="modal-header border-0">
-                    <h5 class="modal-title fw-bold" id="addTaskModalLabel">To do List</h5>
+                    <h5 class="modal-title fw-bold translate" id="addTaskModalLabel" data-key="add">Tambah</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <form action="add_todo.php" method="POST">
                     <div class="modal-body">
-                        <label class="fw-bold mb-1">Nama Kegiatan</label>
+                        <label class="fw-bold mb-1 translate" data-key="enterActivity">Masukkan nama kegiatan</label>
                         <input type="text" class="form-control mb-3" name="kegiatan" required>
 
-                        <label class="fw-bold mb-1">Kategori</label>
+                        <label class="fw-bold mb-1 translate" data-key="category">Kategori</label>
                         <select class="form-select mb-3" name="kategori" required>
-                            <option selected disabled>Pilih kategori</option>
-                            <option value="Penting, Mendesak">Penting, Mendesak</option>
-                            <option value="Penting, Tidak Mendesak">Penting, Tidak Mendesak</option>
-                            <option value="Tidak Penting, Mendesak">Tidak Penting, Mendesak</option>
-                            <option value="Tidak Penting, Tidak Mendesak">Tidak Penting, Tidak Mendesak</option>
+                            <option selected disabled class="translate" data-key="selectCategory">Pilih kategori</option>
+                            <option value="Penting, Mendesak" class="translate" data-key="Penting, Mendesak">Penting, Mendesak</option>
+                            <option value="Penting, Tidak Mendesak" class="translate" data-key="Penting, Tidak Mendesak">Penting, Tidak Mendesak</option>
+                            <option value="Tidak Penting, Mendesak" class="translate" data-key="Tidak Penting, Mendesak">Tidak Penting, Mendesak</option>
+                            <option value="Tidak Penting, Tidak Mendesak" class="translate" data-key="Tidak Penting, Tidak Mendesak">Tidak Penting, Tidak Mendesak</option>
                         </select>
 
-                        <label class="fw-bold mb-1">Waktu</label>
+                        <label class="fw-bold mb-1 translate" data-key="time">Waktu</label>
                         <input type="datetime-local" class="form-control" name="due_date" required>
                     </div>
                     <div class="modal-footer border-0">
-                        <button type="submit" class="btn btn-success w-100">Masukkan</button>
+                        <button type="submit" class="btn btn-success w-100 translate" data-key="submit">Masukkan</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  const tasksByDate = <?php echo json_encode($allTasks); ?>;
-</script>
+    <script>
+        const tasksByDate = <?php echo json_encode($allTasks); ?>;
+    </script>
     <script src="calender.js"></script>
-    
-<script>
-  const upcomingTasks = <?php echo json_encode($todos); ?>;
 
-  function checkReminder() {
-    const now = new Date().getTime();
+    <script>
+        const upcomingTasks = <?php echo json_encode($todos); ?>;
 
-    upcomingTasks.forEach(task => {
-      const taskTime = new Date(task.due_date).getTime();
-      const diffMinutes = Math.floor((taskTime - now) / 60000);
+        function checkReminder() {
+            const now = new Date().getTime();
 
-      if (diffMinutes === 5 && !task.reminded) {
-        // Tampilkan notifikasi
-        alert(`⏰ Reminder!\n"${task.kegiatan}" akan dimulai dalam 5 menit!`);
+            upcomingTasks.forEach(task => {
+                const taskTime = new Date(task.due_date).getTime();
+                const diffMinutes = Math.floor((taskTime - now) / 60000);
 
-        // Tandai sudah diingatkan agar tidak berulang
-        task.reminded = true;
-      }
-    });
-  }
+                if (diffMinutes === 5 && !task.reminded) {
+                    // Tampilkan notifikasi
+                    alert(`⏰ Reminder!\n"${task.kegiatan}" akan dimulai dalam 5 menit!`);
 
-  // Cek setiap 30 detik
-  setInterval(checkReminder, 30000);
-</script>
+                    // Tandai sudah diingatkan agar tidak berulang
+                    task.reminded = true;
+                }
+            });
+        }
 
+        // Cek setiap 30 detik
+        setInterval(checkReminder, 30000);
+    </script>
+    <script src="Settings/lang.js"></script>
 </body>
 
 </html>

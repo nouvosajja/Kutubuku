@@ -67,7 +67,7 @@ body {
   border-radius: 2rem;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  height: 100%;
+  height: 330px;
 }
 
 .todo-item {
@@ -153,7 +153,7 @@ body {
   background-color: #f1fbb2;
   border-radius: 2rem;
   padding: 2rem;
-  height: calc(100vh - 6rem);
+  height: 100%;
   margin-bottom: 1rem;
   margin-left: auto;
   margin-right: auto;
@@ -182,18 +182,25 @@ body {
 }
 
 .add-btn {
+  position: fixed;
+  bottom: 30px; /* Jarak dari bawah layar */
+  right: 30px;  /* Jarak dari kanan layar */
+  width: 60px;
+  height: 60px;
+  font-size: 32px;
   background-color: steelblue;
   color: white;
-  font-size: 2rem;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
   border: none;
-  z-index: 1;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  transition: background-color 0.3s ease;
 }
+
+.add-btn:hover {
+  background-color: #218838;
+}
+
 
 .modal-backdrop.show {
   backdrop-filter: blur(5px);

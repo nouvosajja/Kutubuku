@@ -14,7 +14,7 @@
     
     <div class="top-left-title">
   <i class="fas fa-language fa-lg"></i>
-  <span class="fw-bold fs-5">Bahasa</span>
+  <span class="fw-bold fs-5 translate" data-key="language">Bahasa</span>
 </div>
 
 <a href="javascript:history.back()" class="btn-close top-right-close" aria-label="Close"></a>
@@ -30,7 +30,7 @@
       <i class="fas fa-check checkmark hidden" id="check-en"></i>
     </div>
 
-    <button class="btn-ganti" onclick="saveLanguage()">Ganti</button>
+    <button class="btn-ganti translate" data-key="change" onclick="saveLanguage()">Ganti</button>
   </div>
 
   <script>
@@ -67,5 +67,6 @@
     updateUI();
   </script>
 
+<script src="lang.js"></script>
 </body>
 </html>
